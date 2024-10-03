@@ -1,88 +1,89 @@
+import tkinter as tk
+from tkinter import messagebox
+
 # Base de datos de estudiantes (lista de diccionarios)
 base_de_datos = []
 
 # Función para agregar un nuevo estudiante
 def agregar_estudiante():
-    nombre = input("Ingrese el nombre del estudiante: ")
-    id = int(input("Ingrese el número de identificación: "))
-    edad = int(input("Ingrese la edad del estudiante: "))
+    nombre = entry_nombre.get()
+    id = entry_id.get()
+    edad = entry_edad.get()
+
+    if not nombre or not id or not edad:
+        messagebox.showwarning("Datos incompletos", "Por favor, rellene todos los campos.")
+        return
 
     # Creamos un diccionario con los datos del estudiante
-    estudiante = {"nombre": nombre, "id": id, "edad": edad}
+    estudiante = {"nombre": nombre, "id": int(id), "edad": int(edad)}
 
     # Lo agregamos a la base de datos
     base_de_datos.append(estudiante)
-    print("Estudiante agregado correctamente.\n")
+    messagebox.showinfo("Éxito", "Estudiante agregado correctamente.")
+    limpiar_campos()
 
-# Función para mostrar todos los estudiantes
 def mostrar_estudiantes():
     if base_de_datos:
-        print("Lista de estudiantes:")
-        for estudiante in base_de_datos:
-            print(f"ID: {estudiante['id']}, Nombre: {estudiante['nombre']}, Edad: {estudiante['edad']}")
+        estudiantes = "\n".join([f"ID: {est['id']}, Nombre: {est['nombre']}, Edad: {est['edad']}" for est in base_de_datos])
+        messagebox.showinfo("Lista de Estudiantes", estudiantes)
     else:
-        print("La base de datos está vacía.\n")
+        messagebox.showinfo("Lista Vacía", "No hay estudiantes en la base de datos.")
 
-# Función para buscar un estudiante por ID
 def buscar_estudiante():
-    id = int(input("Ingrese el ID del estudiante que desea buscar: "))
+    id = entry_buscar_id.get()
+
+    if not id:
+        messagebox.showwarning("Falta ID", "Por favor, ingrese el ID del estudiante a buscar.")
+        return
+
     for estudiante in base_de_datos:
-        if estudiante["id"] == id:
-            print(f"Estudiante encontrado: Nombre: {estudiante['nombre']}, Edad: {estudiante['edad']}")
+        if estudiante["id"] == int(id):
+            messagebox.showinfo("Estudiante Encontrado", f"Nombre: {estudiante['nombre']}, Edad: {estudiante['edad']}")
             return
-    print("Estudiante no encontrado.\n")
+    messagebox.showerror("No Encontrado", "Estudiante no encontrado.")
 
-# Función para actualizar la información de un estudiante
-def actualizar_estudiante():
-    id = int(input("Ingrese el ID del estudiante que desea actualizar: "))
-    for estudiante in base_de_datos:
-        if estudiante["id"] == id:
-            nombre = input(f"Ingrese el nuevo nombre (actual: {estudiante['nombre']}): ")
-            edad = int(input(f"Ingrese la nueva edad (actual: {estudiante['edad']}): "))
-            estudiante["nombre"] = nombre
-            estudiante["edad"] = edad
-            print("Información del estudiante actualizada.\n")
-            return
-    print("Estudiante no encontrado.\n")
+def limpiar_campos():
+    entry_nombre.delete(0, tk.END)
+    entry_id.delete(0, tk.END)
+    entry_edad.delete(0, tk.END)
+    entry_buscar_id.delete(0, tk.END)
 
-# Función para eliminar un estudiante
-def eliminar_estudiante():
-    id = int(input("Ingrese el ID del estudiante que desea eliminar: "))
-    for estudiante in base_de_datos:
-        if estudiante["id"] == id:
-            base_de_datos.remove(estudiante)
-            print("Estudiante eliminado correctamente.\n")
-            return
-    print("Estudiante no encontrado.\n")
+# Crear la ventana principal
+root = tk.Tk()
+root.title("Gestión de Estudiantes")
 
-# Menú interactivo
-def menu():
-    while True:
-        print("\n--- Menú de Base de Datos de Estudiantes ---")
-        print("1. Agregar estudiante")
-        print("2. Mostrar estudiantes")
-        print("3. Buscar estudiante por ID")
-        print("4. Actualizar información de estudiante")
-        print("5. Eliminar estudiante")
-        print("6. Salir")
+# Widgets de entrada y botones
+label_nombre = tk.Label(root, text="Nombre:")
+label_nombre.pack()
+entry_nombre = tk.Entry(root)
+entry_nombre.pack()
 
-        opcion = input("Elija una opción: ")
+label_id = tk.Label(root, text="ID:")
+label_id.pack()
+entry_id = tk.Entry(root)
+entry_id.pack()
 
-        if opcion == "1":
-            agregar_estudiante()
-        elif opcion == "2":
-            mostrar_estudiantes()
-        elif opcion == "3":
-            buscar_estudiante()
-        elif opcion == "4":
-            actualizar_estudiante()
-        elif opcion == "5":
-            eliminar_estudiante()
-        elif opcion == "6":
-            print("Saliendo del programa.")
-            break
-        else:
-            print("Opción no válida. Inténtelo de nuevo.\n")
+label_edad = tk.Label(root, text="Edad:")
+label_edad.pack()
+entry_edad = tk.Entry(root)
+entry_edad.pack()
 
-# Ejecutar el menú
-menu()
+btn_agregar = tk.Button(root, text="Agregar Estudiante", command=agregar_estudiante)
+btn_agregar.pack()
+
+label_buscar_id = tk.Label(root, text="Buscar Estudiante por ID:")
+label_buscar_id.pack()
+entry_buscar_id = tk.Entry(root)
+entry_buscar_id.pack()
+
+btn_buscar = tk.Button(root, text="Buscar", command=buscar_estudiante)
+btn_buscar.pack()
+
+btn_mostrar = tk.Button(root, text="Mostrar Estudiantes", command=mostrar_estudiantes)
+btn_mostrar.pack()
+
+btn_limpiar = tk.Button(root, text="Limpiar Campos", command=limpiar_campos)
+btn_limpiar.pack()
+
+# Ejecutar el bucle principal de la ventana
+root.mainloop()
