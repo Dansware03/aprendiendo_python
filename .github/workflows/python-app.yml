@@ -1,7 +1,7 @@
 # Workflow de GitHub Actions para el proyecto de gestión de estudiantes
 # Utiliza Python 3.12.6 y ejecuta pruebas y análisis de código
 
-name: Python application
+name: Python application test
 
 on:
   push:
